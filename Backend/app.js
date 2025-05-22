@@ -38,6 +38,7 @@ app.post("/submit", async (req, res) => {
       link: req.body.link,
       description: req.body.description,
     });
+    console.log(listing);
     await listing.save();
     console.log("Event data saved");
     res.status(201).json({ message: "Event created successfully" });
@@ -68,7 +69,6 @@ app.post("/signup", async (req, res) => {
 // Login route (matches React form)
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
 

@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.css';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated prop
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -27,8 +27,8 @@ const LoginPage = () => {
         if (data.token) {
           localStorage.setItem('token', data.token);
         }
-        // Redirect to EventForm page
-        navigate('/eventform');
+        setIsAuthenticated(true);  // <-- update auth state here
+        navigate('/eventform');    // <-- redirect after login
       } else {
         alert(data.message || 'Login failed');
       }
