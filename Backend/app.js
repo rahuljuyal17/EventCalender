@@ -27,7 +27,7 @@ app.get("/", async (req, res) => {
 });
 
 // Submit event 
-app.post("/submit", async (req, res) => {
+app.post("/api/events", async (req, res) => {
   try {
     const listing = new Listing({
       title: req.body.title,
@@ -71,7 +71,6 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-
     if (user && user.password === password) {
       res.status(200).json({ message: "Login successful" });
     } else {

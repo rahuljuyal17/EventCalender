@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import './form.css';
+import { useNavigate } from 'react-router-dom';
+import "./EventForm.css";
 
 export default function EventForm() {
   const [form, setForm] = useState({
     title: '', organizer: '', date: '', time: '', location: '', link: '', description: ''
   });
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -14,7 +17,7 @@ export default function EventForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:8080/submit', {
+      const res = await fetch('http://localhost:8080/api/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -22,6 +25,7 @@ export default function EventForm() {
       if (!res.ok) throw new Error('Failed to submit event');
       alert('🎉 Event Submitted!');
       setForm({ title: '', organizer: '', date: '', time: '', location: '', link: '', description: '' });
+      navigate('/');
     } catch (err) {
       alert('Error: ' + err.message);
     }
