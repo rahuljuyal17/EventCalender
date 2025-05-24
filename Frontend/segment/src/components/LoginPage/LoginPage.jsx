@@ -50,10 +50,10 @@ const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated
           <h2 className="login-id">Login</h2>
           <form onSubmit={handleSubmit}>
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" required defaultValue="dummyuser@example.com" />
+            <input type="email" id="email" name="email" required  />
 
             <label htmlFor="password">Password</label>
-            <input type="password" id="password" name="password" required defaultValue="dummyPassword123" />
+            <input type="password" id="password" name="password" required/>
 
             <button type="submit">LOGIN</button>
 
