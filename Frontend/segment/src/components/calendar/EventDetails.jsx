@@ -1,8 +1,8 @@
 import React from "react";
 import { getEventsForDate } from "../../utils/eventUtils";
 
-export default function EventDetails({ dateStr, getEventColor }) {
-  const dayEvents = getEventsForDate(dateStr);
+export default function EventDetails({ dateStr, getEventColor, events = [] }) {
+  const dayEvents = getEventsForDate(dateStr, events);
   if (!dayEvents.length) return <p style={{ textAlign: "center", opacity: 0.7 }}>No events for this date.</p>;
 
   return (

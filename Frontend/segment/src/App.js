@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { events } from "./data/events";
 import { clubs } from "./data/Clubs";
 import { getEventColor } from "./utils/eventUtils";
 import ClubSelector from "./components/sidebar/ClubSelector";
@@ -21,9 +20,35 @@ function Dashboard({ isAuthenticated }) {
   const navigate = useNavigate();
   const [selectedClub, setSelectedClub] = useState("");
   const [selectedDateStr, setSelectedDateStr] = useState(null);
-  const [viewYear, setViewYear] = useState(2025);
-  const [viewMonth, setViewMonth] = useState(4);
+  const [viewYear, setViewYear] = useState(new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [calendarView, setCalendarView] = useState("month");
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const response = await fetch("http://localhost:8080/");
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        const data = await response.json();
+        const mappedEvents = data.map(ev => ({
+          date: ev.date ? ev.date.split("T")[0] : "",
+          title: ev.title,
+          time: ev.time,
+          type: ev.type || "default",
+          club: ev.organizer || "",
+          completed: false,
+          results: ev.description || "",
+        }));
+        setEvents(mappedEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    }
+    fetchEvents();
+  }, []);
 
   const weekDate = calendarView === "week" && !selectedDateStr
     ? new Date()
@@ -93,7 +118,7 @@ function Dashboard({ isAuthenticated }) {
           <div className="section-title">Upcoming Events</div>
           <UpcomingEventsList upcomingEvents={upcomingEvents} />
           <div className="section-title" style={{ marginTop: 24 }}>Events on Selected Day</div>
-          <EventDetails dateStr={selectedDateStr} getEventColor={getEventColor} />
+          <EventDetails dateStr={selectedDateStr} getEventColor={getEventColor} events={events} />
         </aside>
       </div>
     </div>
