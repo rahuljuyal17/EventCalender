@@ -12,7 +12,7 @@ const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated
     const password = e.target.password.value;
 
     try {
-      const response = await fetch('/login', {
+      const response = await fetch('http://localhost:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,10 +50,10 @@ const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated
           <h2 className="login-id">Login</h2>
           <form onSubmit={handleSubmit}>
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" required />
+            <input type="email" id="email" name="email" required defaultValue="dummyuser@example.com" />
 
             <label htmlFor="password">Password</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="password" required defaultValue="dummyPassword123" />
 
             <button type="submit">LOGIN</button>
 

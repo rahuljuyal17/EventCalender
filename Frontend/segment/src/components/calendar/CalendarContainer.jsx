@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import YearView from "./YearView";
 import MonthView from "./MonthView";
 import WeekView from "./WeekView";
 import EventDetails from "./EventDetails";
-import { events } from "../../data/events";
+// Removed static events import
 import { getEventColor } from "../../utils/eventUtils";
 
 export default function CalendarContainer() {
@@ -19,6 +19,37 @@ export default function CalendarContainer() {
 
   // State for selected date string (YYYY-MM-DD)
   const [selectedDate, setSelectedDate] = useState(null);
+
+  // New state for events fetched from backend
+  const [events, setEvents] = useState([]);
+
+  // Fetch events from backend API on component mount
+  useEffect(() => {
+    async function fetchEvents() {
+      try {
+        const response = await fetch("http://localhost:8080/");
+        if (!response.ok) {
+          throw new Error("Failed to fetch events");
+        }
+        const data = await response.json();
+        // Map backend data to frontend event structure if needed
+        const mappedEvents = data.map(ev => ({
+          date: ev.date ? ev.date.split("T")[0] : "",
+          title: ev.title,
+          time: ev.time,
+          type: ev.type || "default",
+          club: ev.organizer || "",
+          completed: false,
+          results: ev.description || "",
+          // Additional fields can be added as needed
+        }));
+        setEvents(mappedEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    }
+    fetchEvents();
+  }, []);
 
   // Handlers for YearView navigation and selection
   function handleSetViewYear(year) {
@@ -111,10 +142,9 @@ export default function CalendarContainer() {
       {selectedDate && (
         <div className="event-details-container">
           <button onClick={handleBackToYearView}>Back to Year View</button>
-          <EventDetails dateStr={selectedDate} getEventColor={getEventColor} />
+          <EventDetails dateStr={selectedDate} getEventColor={getEventColor} events={events} />
         </div>
       )}
     </div>
   );
 }
-

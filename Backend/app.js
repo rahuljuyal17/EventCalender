@@ -20,7 +20,6 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
-
 app.get("/", async (req, res) => {
   const events = await Listing.find();
   res.json(events); 
@@ -62,22 +61,6 @@ app.post("/signup", async (req, res) => {
     }
   } catch (err) {
     console.error("Signup error:", err);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
-// Login route (matches React form)
-app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (user && user.password === password) {
-      res.status(200).json({ message: "Login successful" });
-    } else {
-      res.status(401).json({ message: "Invalid email or password" });
-    }
-  } catch (err) {
-    console.error("Login error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
