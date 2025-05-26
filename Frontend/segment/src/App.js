@@ -1,3 +1,4 @@
+// Updated App.js with compact layout and download button behavior
 import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { getEventColor } from "./utils/eventUtils";
@@ -21,6 +22,7 @@ function Dashboard({ isAuthenticated }) {
   const [calendarView, setCalendarView] = useState("month");
   const [events, setEvents] = useState([]);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [showCompletedDropdown, setShowCompletedDropdown] = useState(false);
 
   useEffect(() => {
     async function fetchEvents() {
@@ -92,6 +94,7 @@ function Dashboard({ isAuthenticated }) {
   };
 
   const handleDownloadClick = () => {
+    setShowCompletedDropdown(true);
     setShowDownloadDialog(true);
   };
 
@@ -100,7 +103,7 @@ function Dashboard({ isAuthenticated }) {
       const downloadUrl = `http://localhost:8080/api/reports/download?range=${range}`;
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = ''; // Let browser use filename from header
+      a.download = '';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -136,11 +139,17 @@ function Dashboard({ isAuthenticated }) {
             <YearView initialYear={viewYear} setViewMonth={setViewMonth} setViewYear={setViewYear} setCalendarView={setCalendarView} />
           )}
         </main>
-        <aside className="right-panel glass-panel">
-          <div className="section-title">Completed Events</div>
-          <CompletedEventsDropdown completedEvents={completedEvents} onSelect={() => {}} />
+        <aside className={`right-panel glass-panel ${showCompletedDropdown ? 'show-dropdown' : ''}`}>
+          {showCompletedDropdown && (
+            <>
+              <div className="section-title">Completed Events</div>
+              <CompletedEventsDropdown completedEvents={completedEvents} onSelect={() => {}} />
+            </>
+          )}
           <button className="download-btn" onClick={handleDownloadClick}><span className="button-content">Download Report</span></button>
-          <div className="section-title" style={{ marginTop: 24 }}>Events on Selected Day</div>
+          {!showCompletedDropdown && (
+            <div className="section-title" style={{ marginTop: 24 }}>Events on Selected Day</div>
+          )}
           <EventDetails dateStr={selectedDateStr} getEventColor={getEventColor} events={events} />
         </aside>
       </div>

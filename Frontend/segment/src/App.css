@@ -777,3 +777,81 @@ html::-webkit-scrollbar,
   box-shadow: 0 6px 18px #0002;
   background: #f0f8ff;
 }
+/* Compact Dashboard Styles for Calendar */
+
+/* Shrink sidebars for compact layout */
+.sidebar, .right-panel {
+  width: 200px;
+  padding: 16px;
+  height: 600px;
+  transition: all 0.3s ease;
+}
+
+/* Default right-panel: center content */
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* When dropdown is visible */
+.right-panel.show-dropdown {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+/* Completed events section styling */
+.right-panel .section-title:first-child {
+  align-self: flex-start;
+  margin-bottom: 8px;
+}
+
+.right-panel .CompletedEventsDropdown {
+  align-self: flex-start;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Adjust download button spacing */
+.download-btn {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  align-self: center;
+}
+
+/* Adjust calendar height */
+.calendar-panel {
+  min-height: 600px;
+  padding: 16px;
+}
+
+/* Optional: shrink calendar cells if needed */
+.day {
+  min-height: 60px;
+  max-width: 58px;
+  font-size: 0.95rem;
+}
+
+/* Ensure dashboard uses full height without scroll */
+.dashboard {
+  height: 90vh;
+  overflow: hidden;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+    height: auto;
+    padding: 10px;
+  }
+  .sidebar, .right-panel, .calendar-panel {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
+}
