@@ -27,7 +27,7 @@ function Dashboard({ isAuthenticated }) {
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const response = await fetch("http://localhost:8080/api/events");
+        const response = await fetch("http://localhost:8000/api/events");
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
@@ -70,8 +70,24 @@ function Dashboard({ isAuthenticated }) {
     return eventDate >= today;
   });
 
-  const handlePrevMonth = () => setViewMonth(m => m === 0 ? (setViewYear(y => y - 1), 11) : m - 1);
-  const handleNextMonth = () => setViewMonth(m => m === 11 ? (setViewYear(y => y + 1), 0) : m + 1);
+  const handlePrevMonth = () => {
+    setViewMonth(prevMonth => {
+      const newMonth = prevMonth === 0 ? 11 : prevMonth - 1;
+      const newYear = prevMonth === 0 ? viewYear - 1 : viewYear;
+      setViewYear(newYear);
+      return newMonth;
+    });
+  };
+
+  const handleNextMonth = () => {
+    setViewMonth(prevMonth => {
+      const newMonth = prevMonth === 11 ? 0 : prevMonth + 1;
+      const newYear = prevMonth === 11 ? viewYear + 1 : viewYear;
+      setViewYear(newYear);
+      return newMonth;
+    });
+  };
+
 
   const handlePrevWeek = () => setSelectedDateStr(dateStr => {
     const d = dateStr ? new Date(dateStr) : new Date();
@@ -100,7 +116,7 @@ function Dashboard({ isAuthenticated }) {
 
   const handleDownloadOption = (range) => {
     if (range) {
-      const downloadUrl = `http://localhost:8080/api/reports/download?range=${range}`;
+      const downloadUrl = `http://localhost:8000/api/reports/download?range=${range}`;
       const a = document.createElement('a');
       a.href = downloadUrl;
       a.download = '';

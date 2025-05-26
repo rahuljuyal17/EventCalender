@@ -40,24 +40,38 @@ export default function CalendarContainer() {
 
   // Simple month navigation
   function handlePrevMonth() {
-    const { year, month } = viewDate;
-    if (month === 0) {
-      if (year <= 1) return; // Don't go below year 1
-      setViewDate({ year: year - 1, month: 11 });
-    } else {
-      setViewDate({ year, month: month - 1 });
-    }
+    setViewDate(prev => {
+      const { year, month } = prev;
+      console.log("handlePrevMonth before update:", year, month);
+      if (month === 0) {
+        if (year <= 1) return prev; // Don't go below year 1
+        const newState = { year: year - 1, month: 11 };
+        console.log("handlePrevMonth newState:", newState);
+        return newState;
+      } else {
+        const newState = { year, month: month - 1 };
+        console.log("handlePrevMonth newState:", newState);
+        return newState;
+      }
+    });
     setSelectedDate(null);
   }
 
   function handleNextMonth() {
-    const { year, month } = viewDate;
-    if (month === 11) {
-      if (year >= 9999) return; // Don't go above year 9999
-      setViewDate({ year: year + 1, month: 0 });
-    } else {
-      setViewDate({ year, month: month + 1 });
-    }
+    setViewDate(prev => {
+      const { year, month } = prev;
+      console.log("handleNextMonth before update:", year, month);
+      if (month === 11) {
+        if (year >= 9999) return prev; // Don't go above year 9999
+        const newState = { year: year + 1, month: 0 };
+        console.log("handleNextMonth newState:", newState);
+        return newState;
+      } else {
+        const newState = { year, month: month + 1 };
+        console.log("handleNextMonth newState:", newState);
+        return newState;
+      }
+    });
     setSelectedDate(null);
   }
 
@@ -127,6 +141,8 @@ export default function CalendarContainer() {
           events={events}
         />
       )}
+
+
 
       {calendarView === "week" && (
         <WeekView

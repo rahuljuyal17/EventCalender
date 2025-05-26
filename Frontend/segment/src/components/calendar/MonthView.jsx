@@ -1,10 +1,9 @@
 import React from "react";
+import { eventColorPalette } from "../../data/eventTypeColors";
 
 // Helper to format date string (YYYY-MM-DD)
 function formatDate(year, month, day) {
-  return `${year}-${(month + 1).toString().padStart(2, "0")}-${day
-    .toString()
-    .padStart(2, "0")}`;
+  return year + "-" + (month + 1).toString().padStart(2, "0") + "-" + day.toString().padStart(2, "0");
 }
 
 const MONTHS = [
@@ -17,7 +16,6 @@ export default function MonthView({
   month,
   selectedDateStr,
   onSelectDate,
-  getEventColor,
   onPrevMonth,
   onNextMonth,
   onGoToWeekView, // <--- NEW PROP
@@ -36,7 +34,7 @@ export default function MonthView({
   // Previous month's days
   for (let i = firstDayIndex; i > 0; i--) {
     days.push(
-      <div key={`prev-${i}`} className="day calendar-other">
+      <div key={"prev-" + i} className="day calendar-other">
         <span className="day-number">{prevLastDay - i + 1}</span>
       </div>
     );
@@ -48,18 +46,18 @@ export default function MonthView({
     days.push(
       <div
         key={dateStr}
-        className={`day${selectedDateStr === dateStr ? " selected" : ""}`}
+        className={"day" + (selectedDateStr === dateStr ? " selected" : "")}
         onClick={() => onSelectDate(dateStr)}
       >
         <span className="day-number">{day}</span>
         {dayEvents.length > 0 && (
           <div className="event-dots">
-            {dayEvents.slice(0, 4).map(ev => (
+            {dayEvents.slice(0, 4).map((ev, index) => (
               <span
-                key={ev.title}
-                className={`event-dot ${ev.type}`}
-                style={{ background: getEventColor(ev.type) }}
-                title={ev.title + (ev.time ? ` (${ev.time})` : "")}
+                key={ev.title + index}
+                className={"event-dot " + ev.type}
+                style={{ backgroundColor: eventColorPalette[index % eventColorPalette.length] }}
+                title={ev.title + (ev.time ? " (" + ev.time + ")" : "")}
               />
             ))}
             {dayEvents.length > 4 && (
@@ -75,7 +73,7 @@ export default function MonthView({
   const nextDays = 7 - (totalCells % 7 === 0 ? 7 : totalCells % 7);
   for (let i = 1; i <= nextDays; i++) {
     days.push(
-      <div key={`next-${i}`} className="day calendar-other">
+      <div key={"next-" + i} className="day calendar-other">
         <span className="day-number">{i}</span>
       </div>
     );
@@ -89,8 +87,6 @@ export default function MonthView({
           {MONTHS[month]} {year}
         </span>
         <button className="calendar-nav-btn" onClick={onNextMonth}>&gt;</button>
-        
-        
       </div>
       <div className="calendar-days">
         {weekDays.map(day => (

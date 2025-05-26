@@ -6,7 +6,7 @@ export function getEventsForDate(dateStr, events) {
 }
 
 export function getEventColor(type) {
-  return eventTypeColors[type] || "#000";
+  return eventTypeColors[type] || "#00bfff";
 }
 
 export function getEventsForMonth(year, month, events) {

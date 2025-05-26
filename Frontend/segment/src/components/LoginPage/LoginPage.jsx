@@ -12,7 +12,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
     const password = e.target.password.value;
 
     try {
-      const response = await fetch('http://localhost:8080/api/login', {
+      const response = await fetch('http://localhost:8000/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ const LoginPage = ({ setIsAuthenticated }) => {
           localStorage.setItem('token', data.token);
         }
         setIsAuthenticated(true);
-        navigate('/eventform');
+        navigate('/event-form');
       } else {
         // Parse response safely
         const errorData = await response.json().catch(() => ({}));

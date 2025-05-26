@@ -36,91 +36,89 @@ function getMonthMatrix(year, month) {
 
 export default function YearView({
   initialYear = new Date().getFullYear(),
-  setViewMonth,
-  setViewYear,
+  setViewDate,
   setCalendarView
 }) {
-  const [year, setYear] = useState(initialYear);
-  const [quarter, setQuarter] = useState(0); // 0: Jan-Apr, 1: May-Aug, 2: Sep-Dec
+const [year, setYear] = useState(initialYear);
+const [quarter, setQuarter] = useState(0); // 0: Jan-Apr, 1: May-Aug, 2: Sep-Dec
 
-  const monthsToShow = [quarter * 4, quarter * 4 + 1, quarter * 4 + 2, quarter * 4 + 3];
+const monthsToShow = [quarter * 4, quarter * 4 + 1, quarter * 4 + 2, quarter * 4 + 3];
 
-  const handlePrevQuarter = () => {
-    if (quarter === 0) {
-      setQuarter(2);
-      setYear(prev => prev - 1);
-      setViewYear(prev => prev - 1);
-    } else {
-      setQuarter(prev => prev - 1);
-    }
-  };
-
-  const handleNextQuarter = () => {
-    if (quarter === 2) {
-      setQuarter(0);
-      setYear(prev => prev + 1);
-      setViewYear(prev => prev + 1);
-    } else {
-      setQuarter(prev => prev + 1);
-    }
-  };
-
-  const handlePrevYear = () => {
+const handlePrevQuarter = () => {
+  if (quarter === 0) {
+    setQuarter(2);
     setYear(prev => prev - 1);
-    setViewYear(prev => prev - 1);
-  };
+    setViewDate(prev => ({ ...prev, year: prev.year - 1 }));
+  } else {
+    setQuarter(prev => prev - 1);
+  }
+};
 
-  const handleNextYear = () => {
+const handlePrevYear = () => {
+  setYear(prev => prev - 1);
+  setViewDate(prev => ({ ...prev, year: prev.year - 1 }));
+};
+
+const handleNextQuarter = () => {
+  if (quarter === 2) {
+    setQuarter(0);
     setYear(prev => prev + 1);
-    setViewYear(prev => prev + 1);
-  };
+    setViewDate(prev => ({ ...prev, year: prev.year + 1 }));
+  } else {
+    setQuarter(prev => prev + 1);
+  }
+};
 
-  const handleMonthClick = (monthIndex) => {
-    setViewYear(year); // ✅ Now uses internal state year
-    setViewMonth(monthIndex);
-    setCalendarView("month");
-  };
+const handleNextYear = () => {
+  setYear(prev => prev + 1);
+  setViewDate(prev => ({ ...prev, year: prev.year + 1 }));
+};
 
-  return (
-    <div className="yearview-container">
-      <div className="yearview-topbar">
-        <button className="calendar-nav-btn" onClick={handlePrevQuarter}>{"<"}</button>
-        <span className="calendar-month-label">{year}</span>
-        <button className="calendar-nav-btn" onClick={handleNextQuarter}>{">"}</button>
-      </div>
+const handleMonthClick = (monthIndex) => {
+  setViewDate(prev => ({ ...prev, year: year, month: monthIndex }));
+  setCalendarView("month");
+};
 
-      <div className="yearview-grid">
-        {monthsToShow.map((monthIdx) => (
-          <div
-            className="yearview-month-block"
-            key={monthIdx}
-            onClick={() => handleMonthClick(monthIdx)}
-          >
-            <div className="yearview-month-title">{MONTHS[monthIdx]}</div>
-            <div className="yearview-month-calendar">
-              <div className="yearview-weekdays">
-                {WEEKDAYS.map((day) => (
-                  <span key={day} className="yearview-weekday">{day}</span>
-                ))}
-              </div>
-              <div className="yearview-days">
-                {getMonthMatrix(year, monthIdx).map((week, i) => (
-                  <div className="yearview-week" key={i}>
-                    {week.map((day, j) => (
-                      <span
-                        key={j}
-                        className={`yearview-day ${day === null ? "yearview-day-empty" : ""}`}
-                      >
-                        {day !== null ? day : ""}
-                      </span>
-                    ))}
-                  </div>
-                ))}
-              </div>
+return (
+  <div className="yearview-container">
+    <div className="yearview-topbar">
+      <button className="calendar-nav-btn" onClick={handlePrevQuarter}>{"<"}</button>
+      <span className="calendar-month-label">{year}</span>
+      <button className="calendar-nav-btn" onClick={handleNextQuarter}>{">"}</button>
+    </div>
+
+    <div className="yearview-grid">
+      {monthsToShow.map((monthIdx) => (
+        <div
+          className="yearview-month-block"
+          key={monthIdx}
+          onClick={() => handleMonthClick(monthIdx)}
+        >
+          <div className="yearview-month-title">{MONTHS[monthIdx]}</div>
+          <div className="yearview-month-calendar">
+            <div className="yearview-weekdays">
+              {WEEKDAYS.map((day) => (
+                <span key={day} className="yearview-weekday">{day}</span>
+              ))}
+            </div>
+            <div className="yearview-days">
+              {getMonthMatrix(year, monthIdx).map((week, i) => (
+                <div className="yearview-week" key={i}>
+                  {week.map((day, j) => (
+                    <span
+                      key={j}
+                      className={`yearview-day ${day === null ? "yearview-day-empty" : ""}`}
+                    >
+                      {day !== null ? day : ""}
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-  );
+  </div>
+);
 }
