@@ -139,13 +139,12 @@ function Dashboard({ isAuthenticated }) {
             <YearView initialYear={viewYear} setViewMonth={setViewMonth} setViewYear={setViewYear} setCalendarView={setCalendarView} />
           )}
         </main>
-        <aside className={`right-panel glass-panel ${showCompletedDropdown ? 'show-dropdown' : ''}`}>
-          {showCompletedDropdown && (
-            <>
-              <div className="section-title">Completed Events</div>
-              <CompletedEventsDropdown completedEvents={completedEvents} onSelect={() => {}} />
-            </>
-          )}
+        <aside className="right-panel glass-panel">
+          <div className="section-title">Completed Events</div>
+          <div className="CompletedEventsDropdown">
+            <CompletedEventsDropdown completedEvents={completedEvents} onSelect={() => { }} />
+          </div>
+
           <button className="download-btn" onClick={handleDownloadClick}><span className="button-content">Download Report</span></button>
           {!showCompletedDropdown && (
             <div className="section-title" style={{ marginTop: 24 }}>Events on Selected Day</div>
