@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import "./EventForm.css";
+import Swal from 'sweetalert2';
+import './EventForm.css';
 
 export default function EventForm() {
   const [form, setForm] = useState({
@@ -22,27 +23,35 @@ export default function EventForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
       });
+
       if (!res.ok) throw new Error('Failed to submit event');
-      alert('🎉 Event Submitted!');
+
+      Swal.fire({
+        title: '🎉 Event Submitted!',
+        text: 'Your event has been saved to the calendar.',
+        icon: 'success',
+        confirmButtonText: 'Awesome!'
+      });
+
       setForm({ title: '', organizer: '', date: '', time: '', location: '', link: '', description: '' });
       navigate('/');
     } catch (err) {
-      alert('Error: ' + err.message);
+      Swal.fire('Error', err.message, 'error');
     }
   };
 
   return (
     <div className="main">
-      <div id="particles-js"></div>
       <div className="form-container">
         <div className="form-header">
-          <h1><span id="h1-span">Submit Your Event</span> 🎉</h1>
+          <h1><span id="h1-span">Submit Your Event</span></h1>
           <p>Promote your event to the college community!</p>
         </div>
+
         <form onSubmit={handleSubmit}>
           {['title', 'organizer', 'date', 'time', 'location', 'link', 'description'].map((field, idx) => (
             <div className="form-group" key={idx}>
-              <label htmlFor={field}>{field.replace(/^[a-z]/, c => c.toUpperCase())}</label>
+              <label htmlFor={field}>{field.charAt(0).toUpperCase() + field.slice(1)}</label>
               {field !== 'description' ? (
                 <input
                   type={field === 'date' ? 'date' : field === 'time' ? 'time' : field === 'link' ? 'url' : 'text'}

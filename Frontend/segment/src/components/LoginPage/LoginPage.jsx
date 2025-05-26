@@ -2,7 +2,7 @@ import React from 'react';
 import './styles.css';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated prop
+const LoginPage = ({ setIsAuthenticated }) => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -12,7 +12,7 @@ const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated
     const password = e.target.password.value;
 
     try {
-      const response = await fetch('http://localhost:8080/login', {
+      const response = await fetch('http://localhost:8080/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -20,17 +20,18 @@ const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
+        const data = await response.json();
         alert('Login successful!');
         if (data.token) {
           localStorage.setItem('token', data.token);
         }
-        setIsAuthenticated(true);  // <-- update auth state here
-        navigate('/eventform');    // <-- redirect after login
+        setIsAuthenticated(true);
+        navigate('/eventform');
       } else {
-        alert(data.message || 'Login failed');
+        // Parse response safely
+        const errorData = await response.json().catch(() => ({}));
+        alert(errorData.message || `Login failed (Status ${response.status})`);
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -50,10 +51,10 @@ const LoginPage = ({ setIsAuthenticated }) => {  // <-- added setIsAuthenticated
           <h2 className="login-id">Login</h2>
           <form onSubmit={handleSubmit}>
             <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" required  />
+            <input type="email" id="email" name="email" required />
 
             <label htmlFor="password">Password</label>
-            <input type="password" id="password" name="password" required/>
+            <input type="password" id="password" name="password" required />
 
             <button type="submit">LOGIN</button>
 

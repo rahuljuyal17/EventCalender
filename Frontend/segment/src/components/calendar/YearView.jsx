@@ -45,13 +45,38 @@ export default function YearView({
 
   const monthsToShow = [quarter * 4, quarter * 4 + 1, quarter * 4 + 2, quarter * 4 + 3];
 
-  const handlePrevQuarter = () => setQuarter((q) => (q === 0 ? 2 : q - 1));
-  const handleNextQuarter = () => setQuarter((q) => (q === 2 ? 0 : q + 1));
-  const handlePrevYear = () => setYear((y) => y - 1);
-  const handleNextYear = () => setYear((y) => y + 1);
+  const handlePrevQuarter = () => {
+    if (quarter === 0) {
+      setQuarter(2);
+      setYear(prev => prev - 1);
+      setViewYear(prev => prev - 1);
+    } else {
+      setQuarter(prev => prev - 1);
+    }
+  };
+
+  const handleNextQuarter = () => {
+    if (quarter === 2) {
+      setQuarter(0);
+      setYear(prev => prev + 1);
+      setViewYear(prev => prev + 1);
+    } else {
+      setQuarter(prev => prev + 1);
+    }
+  };
+
+  const handlePrevYear = () => {
+    setYear(prev => prev - 1);
+    setViewYear(prev => prev - 1);
+  };
+
+  const handleNextYear = () => {
+    setYear(prev => prev + 1);
+    setViewYear(prev => prev + 1);
+  };
 
   const handleMonthClick = (monthIndex) => {
-    setViewYear(year);
+    setViewYear(year); // ✅ Now uses internal state year
     setViewMonth(monthIndex);
     setCalendarView("month");
   };
@@ -59,9 +84,9 @@ export default function YearView({
   return (
     <div className="yearview-container">
       <div className="yearview-topbar">
-        <button className="calendar-nav-btn" onClick={handlePrevYear}>{"<"}</button>
+        <button className="calendar-nav-btn" onClick={handlePrevQuarter}>{"<"}</button>
         <span className="calendar-month-label">{year}</span>
-        <button className="calendar-nav-btn" onClick={handleNextYear}>{">"}</button>
+        <button className="calendar-nav-btn" onClick={handleNextQuarter}>{">"}</button>
       </div>
 
       <div className="yearview-grid">
@@ -95,14 +120,6 @@ export default function YearView({
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="yearview-slider">
-        <button className="calendar-nav-btn" onClick={handlePrevQuarter}>{"< Prev 4"}</button>
-        <span className="yearview-slider-label">
-          {MONTHS[monthsToShow[0]]} - {MONTHS[monthsToShow[3]]}
-        </span>
-        <button className="calendar-nav-btn" onClick={handleNextQuarter}>{"Next 4 >"}</button>
       </div>
     </div>
   );

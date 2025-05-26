@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { clubs } from "./data/Clubs";
 import { getEventColor } from "./utils/eventUtils";
-import ClubSelector from "./components/sidebar/ClubSelector";
-import MembersList from "./components/sidebar/MembersList";
 import CompletedEventsDropdown from "./components/RightPanel/CompletedEventsDropdown";
 import UpcomingEventsList from "./components/RightPanel/UpcomingEventsList";
 import MonthView from "./components/calendar/MonthView";
@@ -18,17 +15,17 @@ import "./index.css";
 
 function Dashboard({ isAuthenticated }) {
   const navigate = useNavigate();
-  const [selectedClub, setSelectedClub] = useState("");
   const [selectedDateStr, setSelectedDateStr] = useState(null);
   const [viewYear, setViewYear] = useState(new Date().getFullYear());
   const [viewMonth, setViewMonth] = useState(new Date().getMonth());
   const [calendarView, setCalendarView] = useState("month");
   const [events, setEvents] = useState([]);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
 
   useEffect(() => {
     async function fetchEvents() {
       try {
-        const response = await fetch("http://localhost:8080/");
+        const response = await fetch("http://localhost:8080/api/events");
         if (!response.ok) {
           throw new Error("Failed to fetch events");
         }
@@ -56,8 +53,20 @@ function Dashboard({ isAuthenticated }) {
       ? new Date(selectedDateStr)
       : new Date(viewYear, viewMonth, 1);
 
-  const completedEvents = events.filter(e => e.completed);
-  const upcomingEvents = events.filter(e => !e.completed);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const completedEvents = events.filter(e => {
+    const eventDate = new Date(e.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate < today;
+  });
+
+  const upcomingEvents = events.filter(e => {
+    const eventDate = new Date(e.date);
+    eventDate.setHours(0, 0, 0, 0);
+    return eventDate >= today;
+  });
 
   const handlePrevMonth = () => setViewMonth(m => m === 0 ? (setViewYear(y => y - 1), 11) : m - 1);
   const handleNextMonth = () => setViewMonth(m => m === 11 ? (setViewYear(y => y + 1), 0) : m + 1);
@@ -67,6 +76,7 @@ function Dashboard({ isAuthenticated }) {
     d.setDate(d.getDate() - 7);
     return d.toISOString().slice(0, 10);
   });
+
   const handleNextWeek = () => setSelectedDateStr(dateStr => {
     const d = dateStr ? new Date(dateStr) : new Date();
     d.setDate(d.getDate() + 7);
@@ -79,6 +89,23 @@ function Dashboard({ isAuthenticated }) {
     } else {
       navigate('/login');
     }
+  };
+
+  const handleDownloadClick = () => {
+    setShowDownloadDialog(true);
+  };
+
+  const handleDownloadOption = (range) => {
+    if (range) {
+      const downloadUrl = `http://localhost:8080/api/reports/download?range=${range}`;
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = ''; // Let browser use filename from header
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    setShowDownloadDialog(false);
   };
 
   return (
@@ -97,10 +124,8 @@ function Dashboard({ isAuthenticated }) {
       </header>
       <div className="dashboard">
         <aside className="sidebar glass-panel">
-          <div className="section-title">Clubs & Organizers</div>
-          <ClubSelector clubs={clubs} selectedClub={selectedClub} onChange={setSelectedClub} />
-          <div className="section-title" style={{ marginTop: 16 }}>Members</div>
-          <MembersList members={clubs[selectedClub]} />
+          <div className="section-title">Upcoming Events</div>
+          <UpcomingEventsList upcomingEvents={upcomingEvents} />
         </aside>
         <main className="calendar-panel glass-panel">
           {calendarView === "month" ? (
@@ -114,13 +139,22 @@ function Dashboard({ isAuthenticated }) {
         <aside className="right-panel glass-panel">
           <div className="section-title">Completed Events</div>
           <CompletedEventsDropdown completedEvents={completedEvents} onSelect={() => {}} />
-          <button className="download-btn"><span className="button-content">Download Report</span></button>
-          <div className="section-title">Upcoming Events</div>
-          <UpcomingEventsList upcomingEvents={upcomingEvents} />
+          <button className="download-btn" onClick={handleDownloadClick}><span className="button-content">Download Report</span></button>
           <div className="section-title" style={{ marginTop: 24 }}>Events on Selected Day</div>
           <EventDetails dateStr={selectedDateStr} getEventColor={getEventColor} events={events} />
         </aside>
       </div>
+      {showDownloadDialog && (
+        <div id="download-dialog" className="modal">
+          <div className="modal-content">
+            <h3>Select Report Period</h3>
+            <button className="download-mode" onClick={() => handleDownloadOption('week')}>Weekly</button>
+            <button className="download-mode" onClick={() => handleDownloadOption('month')}>Monthly</button>
+            <button className="download-mode" onClick={() => handleDownloadOption('year')}>Yearly</button>
+            <button className="download-mode" onClick={() => handleDownloadOption(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

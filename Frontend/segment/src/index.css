@@ -472,28 +472,78 @@ border: 1px solid rgba(255, 255, 255, 0.45);
     align-items: center;
     justify-content: center;
     z-index: 2000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .modal-content {
-    background: #fff;
-    border-radius: 8px;
-    padding: 24px;
-    min-width: 250px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 50px;
+    padding-top: 50px;
+    height: 400px;
+    width: 400px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideFadeIn 0.8s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes slideFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #000;
+    font-size: 40px;
+    font-weight: 600;
 }
 
 .download-mode {
-    margin: 6px 0;
-    width: 100%;
-    padding: 8px;
-    background: #1976d2;
-    color: #fff;
+    width: 95%;
+    padding: 20px;
+    margin: 8px 0;
+    background: #e63946;
+    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 10px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background 0.3s ease;
 }
 
 .download-mode:hover {
-    background: #115293;
+    background: #d62828;
+    transform: translateY(-2px);
+}
+
+.download-mode:last-child {
+    margin-top: auto;
+    background: #6c757d;
+}
+
+.download-mode:last-child:hover {
+    background: #5a6268;
 }
 
 .event-item {

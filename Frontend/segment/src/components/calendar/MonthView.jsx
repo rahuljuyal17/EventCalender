@@ -23,6 +23,7 @@ export default function MonthView({
   onGoToWeekView, // <--- NEW PROP
   events = []
 }) {
+  console.log("MonthView props - year:", year, "month:", month);
   const firstDay = new Date(year, month, 1);
   const firstDayIndex = firstDay.getDay();
   const lastDay = new Date(year, month + 1, 0);
